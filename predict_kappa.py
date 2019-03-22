@@ -7,7 +7,6 @@ from tkinter import filedialog , messagebox
 from PIL import Image
 
 ####################################  initialize, load the ANN models in a list
-flag=0
 frame= Tk()
 config = tf.ConfigProto(allow_soft_placement=True)
 
@@ -50,7 +49,7 @@ for version in range(3):
         B.append(  np.loadtxt("%s/rb/rb_v%i" %(parent,version) )  )
     print('ANN nr %i/3 loaded'%(version+1) )
 
-####################################  define the buttons
+####################################  define the commands
 def predict_img():
     i=int(selected.get() ) # i is the version numbered from 0 to 2
     #%% convert the given image to NN input
