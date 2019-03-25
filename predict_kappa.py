@@ -46,7 +46,7 @@ for version in range(3):
         f_m.append(  shifts['f_m']  )
         mu_f.append( shifts['mu_f'] )
         mu_inv.append(  np.diag(1/np.diag(mu_f[version]) )  )
-        B.append(  np.loadtxt("%s/rb/rb_v%i" %(parent,version) )  )
+        B.append(  np.loadtxt("%s/rb/rb_v%i" %(parent,version+1) )  )
     print('ANN nr %i/3 loaded'%(version+1) )
 
 ####################################  define the commands
