@@ -204,12 +204,12 @@ txt=Canvas(frame,width=canvas_width,height=canvas_height)
 txt.grid(column=2,row=7,columnspan=2)#,rowspan=2)
 clear_txtcanvas()
 flag=-1
-t1=' finished loading \n showing "circle_example.txt"'
+t1=' finished loading \n showing "circle_example1.txt"'
 txt.create_text(canvas_width/2, canvas_height/4, text=t1)
 
 #%% assign the image canvas, load and plot the example image
-print('loading and showing " circle_example.txt" ')
-img= np.loadtxt('examples/circle_example.txt' )
+print('loading and plotting " circle_example1.txt" ')
+img= np.loadtxt('examples/circle_example1.txt' )
 plot_img()
 
 ################################# assign the commands to each button
