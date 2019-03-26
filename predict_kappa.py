@@ -4,7 +4,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import (
     FigureCanvasTkAgg, NavigationToolbar2Tk)
-from matplotlib.backend_bases import key_press_handler
+#from matplotlib.backend_bases import key_press_handler
 from matplotlib.figure import Figure
 import subfunctions as subf
 from tkinter import *
@@ -15,6 +15,7 @@ from PIL import Image
 frame= Tk()
 os.environ['TF_CPP_MIN_LOG_LEVEL']='3'
 config = tf.ConfigProto(allow_soft_placement=True)
+np.set_printoptions(precision=3,suppress=True)
 
 print('loading the three ANN....')
 for version in range(3):
@@ -57,14 +58,13 @@ for version in range(3):
 
 ####################################  define the commands
 def predict_img():
-    global flag,t1
+    global flag,t1,t2
     i=int(selected.get() ) # i is the version numbered from 0 to 2
     #%% convert the given image to NN input
     c11=np.transpose(subf.correlation_fct(img)).reshape(400**2,1)
     x=subf.NN_input(B[i],h[i],img,c11)
     
-    x= np.matmul(mu_x[i], x-x_m[i])
-    x= np.transpose(x)
+    x=np.transpose( np.matmul(mu_x[i], x-x_m[i]) )
     if i==0:
        s1='circle trained model'
     elif i==1:
@@ -78,28 +78,31 @@ def predict_img():
     fpre=(  np.matmul(mu_inv[i],np.transpose(fpre))+f_m[i]   )  
     fpre[2]=fpre[2]/np.sqrt(2)
     kappa= np.array( [ ( fpre[0] , fpre[2] ), (fpre[2],fpre[1] ) ] )
+
     print("%s with %s:" %(s2,s1) )
-    np.set_printoptions(precision=3,suppress=True)
     print( np.matrix(kappa) )
     print("\n")
-    t2="%s\n%s: \n [ %10.3f      %10.3f ]\n [ %10.3f      %10.3f ]" % (s1,s2,fpre[0],fpre[2],fpre[2],fpre[1] ) 
+    t3="%s\n%s: \n [ %1.3f      %1.3f ]\n [ %1.3f      %1.3f ]" % (s1,s2,fpre[0],fpre[2],fpre[2],fpre[1] ) 
+
     if flag==1:
-        txt.create_text(canvas_width/2, canvas_height/4, text=t2)
-        flag = -1
+        txt.create_text(canvas_width/2, 3*canvas_height/6, text=t3)
+        flag=-1
+        t2=t3
     elif flag==-1:
-        txt.create_text(canvas_width/2, 3*canvas_height/4, text=t2)
+        txt.create_text(canvas_width/2, 5*canvas_height/6, text=t3)
+        t1=t3
         flag=0
-        t1=t2
-    else: 
-        txt.create_rectangle(1,canvas_height/2 , canvas_width,canvas_height,fill='#ffffff')
-        txt.create_rectangle(1,1 , canvas_width,canvas_height/2,fill='#ffffff')
-        txt.create_text(canvas_width/2, canvas_height/4,  text=t1)
-        t1=t2
-        txt.create_text(canvas_width/2, 3*canvas_height/4,  text=t1)
+    elif flag==0:  #shuffle everything one "box" upwards
+        clear_txtcanvas() 
+        txt.create_text(canvas_width/2, 1*canvas_height/6,  text=t2)
+        t2=t1
+        txt.create_text(canvas_width/2, 3*canvas_height/6,  text=t1)
+        t1=t3
+        txt.create_text(canvas_width/2, 5*canvas_height/6,  text=t1) #current text
 
 def load_txt():
-    global img
-    fname=filedialog.askopenfilename(initialdir = "./",title = "Select TIFF file",filetypes = (("txt files", "*.txt"),("all files","*")) )  
+    global img,fname,flag
+    fname=filedialog.askopenfilename(initialdir = "./",title = "Select ascii file",filetypes = (("txt files", "*.txt"),("all files","*")) )  
     img=np.loadtxt(fname )
     #convert the given image to 1 and 0
     tmp=np.array(img).reshape(400**2)
@@ -107,11 +110,13 @@ def load_txt():
     img= np.array([1 if x==color1 else 0 for x in tmp ]).reshape(400,400)
     plot_img()
     clear_txtcanvas()
+    flag=2
     print('Image loaded, filename: %s' %(fname))
+    ms_info()
 
 def load_tif():
-    global img
-    fname=filedialog.askopenfilename(initialdir = "./",title = "Select ascii file",filetypes = (("tif files", "*.tif"),("all files","*")) )  
+    global img,fname,flag
+    fname=filedialog.askopenfilename(initialdir = "./",title = "Select TIFF file",filetypes = (("tif files", "*.tif"),("all files","*")) )  
     #convert the given image to 1 and 0
     img= Image.open(fname)
     tmp=np.array(img).reshape(400**2)
@@ -119,109 +124,121 @@ def load_tif():
     img= np.array([1 if x==color1 else 0 for x in tmp ]).reshape(400,400)
     plot_img()
     clear_txtcanvas()
+    flag=2
     print('Image loaded, filename: %s' %(fname))
+    ms_info()
     
 
 def plot_img():
-    fig= Figure(figsize=(2.0,2.0),dpi=100)
+    fig= Figure(figsize=(2.65,2.65),dpi=100)
     fig.add_subplot(111).imshow(img,interpolation='nearest')#=plt.matshow(img)
     fig.subplots_adjust(left=0,right=1,top=1,bottom=0,wspace=0,hspace=0)
     
     canvas = FigureCanvasTkAgg(fig, master=frame)  # A tk.DrawingArea.
     canvas.draw()
-    canvas.get_tk_widget().grid(column=0,row=7,columnspan=2,sticky="W")
+    canvas.get_tk_widget().grid(column=0,row=5,columnspan=2,sticky="W")
     plt.show()
 
 def infoascii():
-    global flag,t1
+    global flag,t1,t2
     print("Input: binarized matrix of dimension 400x400")
-    t2="Input: binarized matrix\nof dimension 400x400" 
+    t3="Input: binarized matrix\nof dimension 400x400" 
     if flag==1:
-        txt.create_text(canvas_width/2, canvas_height/4, text=t2)
-        flag = -1
+        txt.create_text(canvas_width/2, 3*canvas_height/6, text=t3)
+        flag=-1
+        t2=t3
     elif flag==-1:
-        txt.create_text(canvas_width/2, 3*canvas_height/4, text=t2)
+        txt.create_text(canvas_width/2, 5*canvas_height/6, text=t3)
+        t1=t3
         flag=0
-        t1=t2
-    else: 
-        txt.create_rectangle(1,canvas_height/2 , canvas_width,canvas_height,fill='#ffffff')
-        txt.create_rectangle(1,1 , canvas_width,canvas_height/2,fill='#ffffff')
-        txt.create_text(canvas_width/2, canvas_height/4,  text=t1)
-        t1=t2
-        txt.create_text(canvas_width/2, 3*canvas_height/4,  text=t1)
+    elif flag==0:  #shuffle everything one "box" upwards
+        clear_txtcanvas() 
+        txt.create_text(canvas_width/2, 1*canvas_height/6,  text=t2)
+        t2=t1
+        txt.create_text(canvas_width/2, 3*canvas_height/6,  text=t1)
+        t1=t3
+        txt.create_text(canvas_width/2, 5*canvas_height/6,  text=t1) #current text
 
 def infotif():
-    global flag,t1
+    global flag,t1,t2
     print("Input: binarized .tif image of resolution/dimensions 400x400") 
-    t2="Input: binarized .tif image \nof resolution 400x400" 
+    t3="Input: binarized .tif image \nof resolution 400x400" 
     if flag==1:
-        txt.create_text(canvas_width/2, canvas_height/4, text=t2)
-        flag = -1
+        txt.create_text(canvas_width/2, 3*canvas_height/6, text=t3)
+        flag=-1
+        t2=t3
     elif flag==-1:
-        txt.create_text(canvas_width/2, 3*canvas_height/4, text=t2)
+        txt.create_text(canvas_width/2, 5*canvas_height/6, text=t3)
+        t1=t3
         flag=0
-        t1=t2
-    else: 
-        txt.create_rectangle(1,canvas_height/2 , canvas_width,canvas_height,fill='#ffffff')
-        txt.create_rectangle(1,1 , canvas_width,canvas_height/2,fill='#ffffff')
-        txt.create_text(canvas_width/2, canvas_height/4,  text=t1)
-        t1=t2
-        txt.create_text(canvas_width/2, 3*canvas_height/4,  text=t1)
+    elif flag==0:  #shuffle everything one "box" upwards
+        clear_txtcanvas() 
+        txt.create_text(canvas_width/2, 1*canvas_height/6,  text=t2)
+        t2=t1
+        txt.create_text(canvas_width/2, 3*canvas_height/6,  text=t1)
+        t1=t3
+        txt.create_text(canvas_width/2, 5*canvas_height/6,  text=t1) #current text
 
 def ms_info():
-    global flag,t1
+    global flag,t1,t2
     print("Specific heat conductivity of matrix phase (dark blue) \t K=1 [W/mK]" )
     print("Specific heat conductivity of inclusions (yellow) \t K=0.2 [W/mK]\n" )
     print("Inclusion phase volume fraction \t\t\t f_b=%1.2f [-]" % (np.mean(img) ) )
-    t2="Specific heat conductivity [W/mK]\n matrix phase \t K=1 \n inclusion \t K=0.2 \n\n volume fraction \t f_b=%1.2f" % (np.mean(img))
-    if flag==1:
-        txt.create_text(canvas_width/2, canvas_height/4, text=t2)
-        flag = -1
+    print("Filename '%s'" %(os.path.basename(fname) ) )
+    t3="Specific heat conductivity [W/mK]\n    matrix phase \t K=1 \n    inclusion \t K=0.2 \nvolume fraction \t f_b=%1.2f\n\nfilename: '%s'" % (np.mean(img),os.path.basename(fname) )
+    if flag==2:
+        txt.create_text(canvas_width/2, 1*canvas_height/6, text=t3)
+        flag=1
+    elif flag==1:
+        txt.create_text(canvas_width/2, 3*canvas_height/6, text=t3)
+        flag=-1
+        t2=t3
     elif flag==-1:
-        txt.create_text(canvas_width/2, 3*canvas_height/4, text=t2)
+        txt.create_text(canvas_width/2, 5*canvas_height/6, text=t3)
+        t1=t3
         flag=0
-        t1=t2
-    else: 
-        txt.create_rectangle(1,canvas_height/2 , canvas_width,canvas_height,fill='#ffffff')
-        txt.create_rectangle(1,1 , canvas_width,canvas_height/2,fill='#ffffff')
-        txt.create_text(canvas_width/2, canvas_height/4,  text=t1)
-        t1=t2
-        txt.create_text(canvas_width/2, 3*canvas_height/4,  text=t1)
+    elif flag==0:  #shuffle everything one "box" upwards
+        clear_txtcanvas() 
+        txt.create_text(canvas_width/2, 1*canvas_height/6,  text=t2)
+        t2=t1
+        txt.create_text(canvas_width/2, 3*canvas_height/6,  text=t1)
+        t1=t3
+        txt.create_text(canvas_width/2, 5*canvas_height/6,  text=t1) #current text
 
 def clear_txtcanvas():
-    global flag,t1
-    txt.create_rectangle(1,canvas_height/2 , canvas_width,canvas_height,fill='#ffffff')
-    txt.create_rectangle(1,1 , canvas_width,canvas_height/2,fill='#ffffff')
-    t1=" "
-    flag=1
+    txt.create_rectangle(1,canvas_height*2/3 , canvas_width,canvas_height,fill='#ffffff') #upper box
+    txt.create_rectangle(1,canvas_height/3 , canvas_width,canvas_height*2/3,fill='#ffffff') #middle box
+    txt.create_rectangle(1,1 , canvas_width,canvas_height/3,fill='#ffffff') #lower box
 
 
 #%%get the canvas image printing the output
+lines=Canvas(frame,width=510,height=10)
+lines.grid(column=0,row=2,columnspan=4)
+lines.create_line(0,4 , 510, 4)
+lines.create_line(0,8 , 510, 8)
 
-canvas_width=200
-canvas_height=200
+canvas_width=250
+canvas_height=320
 txt=Canvas(frame,width=canvas_width,height=canvas_height)
-txt.grid(column=2,row=7,columnspan=2)#,rowspan=2)
-clear_txtcanvas()
-flag=-1
-t1=' finished loading \n showing "circle_example1.txt"'
-txt.create_text(canvas_width/2, canvas_height/4, text=t1)
+txt.grid(column=2,row=3,columnspan=2,rowspan=4)#,rowspan=2)
+clear_txtcanvas() #build the empty canvas
 
 #%% assign the image canvas, load and plot the example image
 print('loading and plotting " circle_example1.txt" ')
-img= np.loadtxt('examples/circle_example1.txt' )
+fname='examples/circle_example1.txt'
+img= np.loadtxt(fname)
 plot_img()
+flag=2
+ms_info()
 
 ################################# assign the commands to each button
-
-
 
 
 #%% assign the rest of the buttons
 
 frame.title("Predict heat conduction tensor with image")
 
-label_in= Label (frame, text="Choose the model")
+label_in= Label (frame, text="Choose the model",font='Helvetica 12 bold')
 label_in.grid(column=1,row=0,columnspan=2)
 
 selected= IntVar()
@@ -237,7 +254,7 @@ ver2.config(width=15)
 ver3.config(width=15)
 
 info_ascii= Button(frame, text="Info ascii", command= infoascii )
-info_ascii.grid(column=3,row=3,sticky="W")
+info_ascii.grid(column=1,row=3,sticky="W")
 info_ascii.config(width=15)
 
 info_tif= Button(frame, text="Info *.tif", command= infotif)
@@ -245,7 +262,7 @@ info_tif.grid(column=0,row=3,sticky="W")
 info_tif.config(width=15)
 
 load_ascii= Button(frame, text="Load ascii", command= load_txt)
-load_ascii.grid(column=3,row=4,sticky="W")
+load_ascii.grid(column=1,row=4,sticky="W")
 load_ascii.config(width=15)
 
 load_tif= Button(frame, text="Load *.tif", command= load_tif)
@@ -253,12 +270,9 @@ load_tif.grid(column=0,row=4,sticky="W")
 load_tif.config(width=15)
 
 predict_nn=Button(frame,text="Predict Kappa",command=predict_img)
-predict_nn.grid(column=1,row=4,columnspan=2)
-predict_nn.config(width=15)
+predict_nn.grid(column=1,row=8,columnspan=3,sticky="W",padx=15)
+predict_nn.config(width=33)
 
-clear_text=Button(frame,text="Clear text",command=clear_txtcanvas)
-clear_text.grid(column=2,row=8,columnspan=2,sticky="W")
-clear_text.config(width=11)
 
 quit=Button(frame,text="QUIT",command=frame.quit)
 quit.grid(column=3,row=8,sticky="E")
@@ -266,7 +280,7 @@ quit.config(width=10)
 
 info=Button(frame,text="Info microstructure",command=ms_info)
 info.grid(column=0,row=8,columnspan=2,sticky="W")
-info.config(width=24)
+info.config(width=15)
 
 
 frame.mainloop()
