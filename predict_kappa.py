@@ -67,29 +67,28 @@ def predict_img():
     x= np.matmul(mu_x[i], x-x_m[i])
     x= np.transpose(x)
     if i==0:
-       s1='circle trained ANN'
+       s1='circle trained model'
     elif i==1:
-       s1='rectangle trained ANN'
+       s1='rectangle trained model'
     elif i==2:
-       s1='mixed trained ANN'
-    print(s1)
-    s2= 'prediction for kappa:'
+       s1='mixed trained model'
+    s2= 'prediction for kappa'
     
     # predict the set and rescale it
     fpre = sess[i].run(model[i],{x_nn[i]:x})
     fpre=(  np.matmul(mu_inv[i],np.transpose(fpre))+f_m[i]   )  
     fpre[2]=fpre[2]/np.sqrt(2)
     kappa= np.array( [ ( fpre[0] , fpre[2] ), (fpre[2],fpre[1] ) ] )
-    print(s2)
+    print("%s with %s:" %(s2,s1) )
     np.set_printoptions(precision=3,suppress=True)
     print( np.matrix(kappa) )
     print("\n")
     if flag==1:
         txt.create_rectangle(1,1 , canvas_width,canvas_height/2,fill='#ffffff')
-        txt.create_text(canvas_width/2, canvas_height/4, text="%s\n%s \n [ %10.3f      %10.3f ]\n [ %10.3f      %10.3f ]" % (s1,s2,fpre[0],fpre[2],fpre[2],fpre[1] ) )
+        txt.create_text(canvas_width/2, canvas_height/4, text="%s\n%s: \n [ %10.3f      %10.3f ]\n [ %10.3f      %10.3f ]" % (s1,s2,fpre[0],fpre[2],fpre[2],fpre[1] ) )
     else: 
         txt.create_rectangle(1,canvas_height/2 , canvas_width,canvas_height,fill='#ffffff')
-        txt.create_text(canvas_width/2, 3*canvas_height/4, text="%s\n%s \n [ %10.3f      %10.3f ]\n [ %10.3f      %10.3f ]" % (s1,s2,fpre[0],fpre[2],fpre[2],fpre[1] ) )
+        txt.create_text(canvas_width/2, 3*canvas_height/4, text="%s\n%s: \n [ %10.3f      %10.3f ]\n [ %10.3f      %10.3f ]" % (s1,s2,fpre[0],fpre[2],fpre[2],fpre[1] ) )
     flag *= -1
 
 def load_txt():
@@ -226,7 +225,7 @@ quit=Button(frame,text="QUIT",command=frame.quit)
 quit.grid(column=8,row=8)
 
 info=Button(frame,text="Info microstructure",command=ms_info)
-info.grid(column=0,row=8,columnspan 2)
+info.grid(column=0,row=8,columnspan=2)
 
 
 frame.mainloop()
