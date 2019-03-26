@@ -129,15 +129,6 @@ def load_tif():
     ms_info()
     
 
-def plot_img():
-    fig= Figure(figsize=(2.65,2.65),dpi=100)
-    fig.add_subplot(111).imshow(img,interpolation='nearest')#=plt.matshow(img)
-    fig.subplots_adjust(left=0,right=1,top=1,bottom=0,wspace=0,hspace=0)
-    
-    canvas = FigureCanvasTkAgg(fig, master=frame)  # A tk.DrawingArea.
-    canvas.draw()
-    canvas.get_tk_widget().grid(column=0,row=5,columnspan=2,sticky="W")
-    plt.show()
 
 def infoascii():
     global flag,t1,t2
@@ -211,9 +202,19 @@ def clear_txtcanvas():
     txt.create_rectangle(1,1 , canvas_width,canvas_height/3,fill='#ffffff') #lower box
 
 
-#%%get the canvas image printing the output
+#%%get the canvas boxes
+def plot_img():
+    fig= Figure(figsize=(2.65,2.65),dpi=100)
+    fig.add_subplot(111).imshow(img,interpolation='nearest')#=plt.matshow(img)
+    fig.subplots_adjust(left=0,right=1,top=1,bottom=0,wspace=0,hspace=0)
+    
+    canvas = FigureCanvasTkAgg(fig, master=frame)  
+    canvas.draw()
+    canvas.get_tk_widget().grid(column=0,row=5,columnspan=2,sticky="W",padx=(15,0) )
+    plt.show()
+
 lines=Canvas(frame,width=510,height=10)
-lines.grid(column=0,row=2,columnspan=4)
+lines.grid(column=0,row=2,columnspan=4,padx=(15,0) )
 lines.create_line(0,4 , 510, 4)
 lines.create_line(0,8 , 510, 8)
 
@@ -239,14 +240,14 @@ ms_info()
 frame.title("Predict heat conduction tensor with image")
 
 label_in= Label (frame, text="Choose the model",font='Helvetica 12 bold')
-label_in.grid(column=1,row=0,columnspan=2)
+label_in.grid(column=1,row=0,columnspan=2,pady=(10,2) )
 
 selected= IntVar()
 ver1 = Radiobutton(frame,text='Circle training', value=0, variable=selected)#, command=load_model)
 ver2 = Radiobutton(frame,text='Rectangle training', value=1, variable=selected)#, command=load_model)
 ver3 = Radiobutton(frame,text='Mixed training', value=2, variable=selected)#, command=load_model)
 
-ver1.grid(column=0,row=1,sticky="W")
+ver1.grid(column=0,row=1,sticky="W",padx=(15,0) )
 ver2.grid(column=1,row=1,columnspan=2)
 ver3.grid(column=3,row=1,sticky="W")
 ver1.config(width=15)
@@ -258,7 +259,7 @@ info_ascii.grid(column=1,row=3,sticky="W")
 info_ascii.config(width=15)
 
 info_tif= Button(frame, text="Info *.tif", command= infotif)
-info_tif.grid(column=0,row=3,sticky="W")
+info_tif.grid(column=0,row=3,sticky="W",padx=(15,0) )
 info_tif.config(width=15)
 
 load_ascii= Button(frame, text="Load ascii", command= load_txt)
@@ -266,7 +267,7 @@ load_ascii.grid(column=1,row=4,sticky="W")
 load_ascii.config(width=15)
 
 load_tif= Button(frame, text="Load *.tif", command= load_tif)
-load_tif.grid(column=0,row=4,sticky="W")
+load_tif.grid(column=0,row=4,sticky="W",padx=(15,0) )
 load_tif.config(width=15)
 
 predict_nn=Button(frame,text="Predict Kappa",command=predict_img)
@@ -274,13 +275,16 @@ predict_nn.grid(column=1,row=8,columnspan=3,sticky="W",padx=15)
 predict_nn.config(width=33)
 
 
+info=Button(frame,text="Info microstructure",command=ms_info)
+info.grid(column=0,row=8,columnspan=2,sticky="W",padx=(15,0))
+info.config(width=15)
+
 quit=Button(frame,text="QUIT",command=frame.quit)
-quit.grid(column=3,row=8,sticky="E")
+quit.grid(column=3,row=8,sticky="E" )
 quit.config(width=10)
 
-info=Button(frame,text="Info microstructure",command=ms_info)
-info.grid(column=0,row=8,columnspan=2,sticky="W")
-info.config(width=15)
+blankspace=Frame(frame,width=15,height=15)
+blankspace.grid(column=10,row=10)
 
 
 frame.mainloop()
