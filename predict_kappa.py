@@ -18,7 +18,7 @@ config = tf.ConfigProto(allow_soft_placement=True)
 np.set_printoptions(precision=3,suppress=True)
 
 print('loading the three ANN....')
-for version in range(1):
+for version in range(3):
     parent="./model"
     path="%s/nn_v%i" %(parent,version+1)
     if version==0: #initialize the list
@@ -40,7 +40,7 @@ for version in range(1):
         B= [np.loadtxt("%s/rb/rb_v%i" %(parent,version+1) ) ]
     
     else: #append to each list
-        graph.append(tf.Graph())#tf.get_default_graph() )
+        graph.append(tf.Graph())
         sess.append(tf.Session(config=config,graph=graph[version]) )
         tf.saved_model.loader.load(sess[version],['tag'],path)  
         x_nn.append( graph[version].get_tensor_by_name('input:0') )
@@ -207,8 +207,6 @@ def plot_img():
     fig= Figure(figsize=(2.65,2.65),dpi=100)
     axis=fig.add_subplot(111)
     axis.imshow(img,interpolation='nearest')
-    #fig.add_subplot(111).imshow(img,interpolation='nearest')
-    #=plt.matshow(img)
     axis.set_xlim(-2.5,401.3)
     axis.set_ylim(401.3,-2.5)
     fig.subplots_adjust(left=0,right=1,top=1,bottom=0,wspace=0,hspace=0)
@@ -226,7 +224,7 @@ lines.create_line(0,8 , 510, 8)
 canvas_width=250
 canvas_height=320
 txt=Canvas(frame,width=canvas_width,height=canvas_height)
-txt.grid(column=2,row=3,columnspan=2,rowspan=4)#,rowspan=2)
+txt.grid(column=2,row=3,columnspan=2,rowspan=4)
 clear_txtcanvas() #build the empty canvas
 
 #%% assign the image canvas, load and plot the example image
@@ -239,18 +237,15 @@ ms_info()
 
 ################################# assign the commands to each button
 
-
-#%% assign the rest of the buttons
-
 frame.title("Predict heat conduction tensor with image")
 
 label_in= Label (frame, text="Choose the model",font='Helvetica 12 bold')
 label_in.grid(column=1,row=0,columnspan=2,pady=(10,2) )
 
 selected= IntVar()
-ver1 = Radiobutton(frame,text='Circle training', value=0, variable=selected)#, command=load_model)
-ver2 = Radiobutton(frame,text='Rectangle training', value=1, variable=selected)#, command=load_model)
-ver3 = Radiobutton(frame,text='Mixed training', value=2, variable=selected)#, command=load_model)
+ver1 = Radiobutton(frame,text='Circle training', value=0, variable=selected)
+ver2 = Radiobutton(frame,text='Rectangle training', value=1, variable=selected)
+ver3 = Radiobutton(frame,text='Mixed training', value=2, variable=selected)
 
 ver1.grid(column=0,row=1,sticky="W",padx=(15,0) )
 ver2.grid(column=1,row=1,columnspan=2)
