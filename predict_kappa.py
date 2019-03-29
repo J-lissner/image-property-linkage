@@ -18,7 +18,7 @@ config = tf.ConfigProto(allow_soft_placement=True)
 np.set_printoptions(precision=3,suppress=True)
 
 print('loading the three ANN....')
-for version in range(3):
+for version in range(1):
     parent="./model"
     path="%s/nn_v%i" %(parent,version+1)
     if version==0: #initialize the list
@@ -205,7 +205,12 @@ def clear_txtcanvas():
 #%%get the canvas boxes
 def plot_img():
     fig= Figure(figsize=(2.65,2.65),dpi=100)
-    fig.add_subplot(111).imshow(img,interpolation='nearest')#=plt.matshow(img)
+    axis=fig.add_subplot(111)
+    axis.imshow(img,interpolation='nearest')
+    #fig.add_subplot(111).imshow(img,interpolation='nearest')
+    #=plt.matshow(img)
+    axis.set_xlim(-2.5,401.3)
+    axis.set_ylim(401.3,-2.5)
     fig.subplots_adjust(left=0,right=1,top=1,bottom=0,wspace=0,hspace=0)
     
     canvas = FigureCanvasTkAgg(fig, master=frame)  
