@@ -1,2 +1,0 @@
-# #red coeff      #version     #neurons     layer1,...,n  #act 1,...n      #learnrate      #n_t      #n_val        #trained_epochs    # explanation: act: 0sigm,1tanh,2relu,3softplus
-    6.0000	    1.0000	    7.0000	   39.0000	    2.0000	    3.0000	    0.0419	 1000.0000	  500.0000	 4571.0000
