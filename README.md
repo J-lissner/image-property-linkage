@@ -1,4 +1,4 @@
-# img---kappa
+# Image based prediction of the heat conduction tensor
 
 Execute "predict_kappa.py" with python3 in the terminal to start the intuitive GUI.
 Longer loading times during startup are due to the loading of the surrogate models.
