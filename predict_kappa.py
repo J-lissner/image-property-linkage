@@ -1,5 +1,10 @@
 import os
-import tensorflow as tf
+try:
+    import tensorflow.compat.v1 as tf
+except:
+    import tensorflow as tf
+    if tf.VERSION[0] != 1:
+        raise Exception( 'non compatible tensorflow version found, 1.14 or 2.X is required')
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import (
@@ -239,15 +244,15 @@ label_in= Label (frame, text="Choose the model",font='Helvetica 12 bold')
 label_in.grid(column=1,row=0,columnspan=2,pady=(10,2) )
 
 selected= IntVar()
-ver1 = Radiobutton(frame,text='Circle training', value=0, variable=selected)
-ver2 = Radiobutton(frame,text='Rectangle training', value=1, variable=selected)
-ver3 = Radiobutton(frame,text='Mixed training', value=2, variable=selected)
+ver1 = Radiobutton(frame, text='Circle training', value=0, variable=selected)
+ver2 = Radiobutton(frame, text='Rectangle training', value=1, variable=selected)
+ver3 = Radiobutton(frame, text='Mixed training', value=2, variable=selected)
 
 ver1.grid(column=0,row=1,sticky="W",padx=(15,0) )
 ver2.grid(column=1,row=1,columnspan=2)
 ver3.grid(column=3,row=1,sticky="W")
 ver1.config(width=15)
-ver2.config(width=15)
+ver2.config(width=20)
 ver3.config(width=15)
 
 info_ascii= Button(frame, text="Info ascii", command= infoascii )
