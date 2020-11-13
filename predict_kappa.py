@@ -174,10 +174,10 @@ def infotif():
 def ms_info():
     global flag,t1,t2
     print("Specific heat conductivity of matrix phase (dark blue) \t K=1 [W/mK]" )
-    print("Specific heat conductivity of inclusions (yellow) \t K=0.2 [W/mK]\n" )
+    print("Specific heat conductivity of inclusions (yellow)      \t K=0.2 [W/mK]\n" )
     print("Inclusion phase volume fraction \t\t\t f_b=%1.2f [-]" % (np.mean(img) ) )
     print("Filename '%s'" %(os.path.basename(fname) ) )
-    t3="Specific heat conductivity [W/mK]\n    matrix phase \t K=1 \n    inclusion \t K=0.2 \nvolume fraction \t f_b=%1.2f\n\nfilename: '%s'" % (np.mean(img),os.path.basename(fname) )
+    t3="Specific heat conductivity [W/mK]\n    matrix phase \t K=1 \n    inclusion    \t K=0.2 \nvolume fraction \t f_b=%1.2f\n\nfilename: '%s'" % (np.mean(img),os.path.basename(fname) )
     if flag==2:
         txt.create_text(canvas_width/2, 1*canvas_height/6, text=t3)
         flag=1
@@ -273,16 +273,16 @@ load_tif.config(width=15)
 
 predict_nn=Button(frame,text="Predict Kappa",command=predict_img)
 predict_nn.grid(column=1,row=8,columnspan=3,sticky="W",padx=15)
-predict_nn.config(width=33)
+predict_nn.config(width=30)
 
 
 info=Button(frame,text="Info microstructure",command=ms_info)
 info.grid(column=0,row=8,columnspan=2,sticky="W",padx=(15,0))
-info.config(width=15)
+info.config(width=18)
 
 quit=Button(frame,text="QUIT",command=frame.quit)
 quit.grid(column=3,row=8,sticky="E" )
-quit.config(width=10)
+quit.config(width=15)
 
 blankspace=Frame(frame,width=15,height=15)
 blankspace.grid(column=10,row=10)
